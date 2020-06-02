@@ -1,4 +1,5 @@
 .vscode/
 **/_pycache_
 **/.ipynb_checkpoints
+**/.pyc
 Week 3-4 - vulnerability analysis/__pycache__/predprey_function.cpython-37.pyc

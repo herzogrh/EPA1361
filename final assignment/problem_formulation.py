@@ -262,7 +262,45 @@ def get_model_for_problem_formulation(problem_formulation_id):
             outcomes.append(ScalarOutcome('RfR Total Costs {}'.format(n), kind=direction))
             outcomes.append(ScalarOutcome('Expected Evacuation Costs {}'.format(n), kind=direction))
         dike_model.outcomes = outcomes
-        
+
+    # Specific to Gelderland Province
+    elif problem_formulation_id == 6:
+        outcomes = []
+
+        for n in function.planning_steps:
+            
+            #Damage  
+            outcomes.append(ScalarOutcome('A1_2 Expected Annual Damage {}'.format(n), variable_name=['A.1_Expected Annual Damage {}'.format(n)], 
+                                function=sum_over, kind=direction))
+            outcomes.append(ScalarOutcome('A1_2 Expected Annual Damage {}'.format(n), variable_name=['A.2_Expected Annual Damage {}'.format(n)], 
+                                function=sum_over, kind=direction))
+            outcomes.append(ScalarOutcome('A3 Expected Annual Damage {}'.format(n), variable_name=['A.3_Expected Annual Damage {}'.format(n)], 
+                                function=sum_over, kind=direction))
+
+            #Casualties
+            outcomes.append(ScalarOutcome('A1_2 Expected Number of Deaths {}'.format(n), variable_name=['A.1_Expected Number of Deaths {}'.format(n)], 
+                                function=sum_over, kind=direction))
+            outcomes.append(ScalarOutcome('A1_2 Expected Number of Deaths {}'.format(n), variable_name=['A.2_Expected Number of Deaths {}'.format(n)], 
+                                function=sum_over, kind=direction))
+            outcomes.append(ScalarOutcome('A3 Expected Number of Deaths {}'.format(n), variable_name=['A.3_Expected Number of Deaths {}'.format(n)], 
+                                function=sum_over, kind=direction))
+
+            #Costs
+            outcomes.append(ScalarOutcome('A1_2 Dike Investment Costs {}'.format(n), variable_name=['A.1_Dike Investment Costs {}'.format(n)], 
+                                function=sum_over, kind=direction))
+            outcomes.append(ScalarOutcome('A1_2 Dike Investment Costs {}'.format(n), variable_name=['A.2_Dike Investment Costs {}'.format(n)], 
+                                function=sum_over, kind=direction))
+            outcomes.append(ScalarOutcome('A3 Dike Investment Costs {}'.format(n), variable_name=['A.3_Dike Investment Costs {}'.format(n)], 
+                                function=sum_over, kind=direction))
+
+
+            outcomes.append(ScalarOutcome('RfR Total Costs {}'.format(n),
+                                          kind=direction))
+            outcomes.append(ScalarOutcome('Expected Evacuation Costs {}'.format(n),
+                                          kind=direction))
+
+        dike_model.outcomes = outcomes
+
     else:
         raise TypeError('unknownx identifier')
         
