@@ -77,6 +77,8 @@ def get_model_for_problem_formulation(problem_formulation_id):
 
         # location-related levers in the form: locationName_leversName
         for lev_name in dike_lev.keys():
+            
+
             for n in function.planning_steps:
                 name = "{}_{} {}".format(dike, lev_name, n)
                 levers.append(IntegerParameter(name, dike_lev[lev_name][0],
@@ -265,41 +267,64 @@ def get_model_for_problem_formulation(problem_formulation_id):
 
     # Specific to Gelderland Province
     elif problem_formulation_id == 6:
+        
+        damage_a1_a2 = []
+        damage_a3 = []
+        casualties_a1_a2 = []        
+        casualties_a3 = []
+        dike_costs = []
+        rfr_costs = []
+        evacuation_costs = []
+        
         outcomes = []
 
         for n in function.planning_steps:
             
             #Damage  
-            outcomes.append(ScalarOutcome('A1_2 Expected Annual Damage {}'.format(n), variable_name=['A.1_Expected Annual Damage {}'.format(n)], 
-                                function=sum_over, kind=direction))
-            outcomes.append(ScalarOutcome('A1_2 Expected Annual Damage {}'.format(n), variable_name=['A.2_Expected Annual Damage {}'.format(n)], 
-                                function=sum_over, kind=direction))
-            outcomes.append(ScalarOutcome('A3 Expected Annual Damage {}'.format(n), variable_name=['A.3_Expected Annual Damage {}'.format(n)], 
-                                function=sum_over, kind=direction))
+            damage_a1_a2.extend(['A.1_Expected Annual Damage {}'.format(n), 'A.2_Expected Annual Damage {}'.format(n)])
+            damage_a3.extend(['A.3_Expected Annual Damage {}'.format(n)])
 
             #Casualties
-            outcomes.append(ScalarOutcome('A1_2 Expected Number of Deaths {}'.format(n), variable_name=['A.1_Expected Number of Deaths {}'.format(n)], 
-                                function=sum_over, kind=direction))
-            outcomes.append(ScalarOutcome('A1_2 Expected Number of Deaths {}'.format(n), variable_name=['A.2_Expected Number of Deaths {}'.format(n)], 
-                                function=sum_over, kind=direction))
-            outcomes.append(ScalarOutcome('A3 Expected Number of Deaths {}'.format(n), variable_name=['A.3_Expected Number of Deaths {}'.format(n)], 
-                                function=sum_over, kind=direction))
+            casualties_a1_a2.extend(['A.1_Expected Number of Deaths {}'.format(n), 'A.2_Expected Number of Deaths {}'.format(n)])
+            casualties_a3.extend(['A.3_Expected Number of Deaths {}'.format(n)])
 
             #Costs
-            outcomes.append(ScalarOutcome('A1_2 Dike Investment Costs {}'.format(n), variable_name=['A.1_Dike Investment Costs {}'.format(n)], 
-                                function=sum_over, kind=direction))
-            outcomes.append(ScalarOutcome('A1_2 Dike Investment Costs {}'.format(n), variable_name=['A.2_Dike Investment Costs {}'.format(n)], 
-                                function=sum_over, kind=direction))
-            outcomes.append(ScalarOutcome('A3 Dike Investment Costs {}'.format(n), variable_name=['A.3_Dike Investment Costs {}'.format(n)], 
-                                function=sum_over, kind=direction))
+            for dike in function.dikelist:
+                dike_costs.extend(['{}_Dike Investment Costs {}'.format(dike,n)
+                                                for dike in function.dikelist])
 
 
-            outcomes.append(ScalarOutcome('RfR Total Costs {}'.format(n),
-                                          kind=direction))
-            outcomes.append(ScalarOutcome('Expected Evacuation Costs {}'.format(n),
-                                          kind=direction))
+            rfr_costs.extend(['RfR Total Costs {}'.format(n)])
+            evacuation_costs.extend(['Expected Evacuation Costs {}'.format(n)])
 
-        dike_model.outcomes = outcomes
+        dike_model.outcomes = [
+                    ScalarOutcome('A1_2 Aggr Expected Annual Damage',
+                          variable_name=[var for var in damage_a1_a2],
+                          function=sum_over, kind=direction),
+
+                ScalarOutcome('A3 Expected Annual Damage',
+                          variable_name=[var for var in damage_a3],
+                          function=sum_over, kind=direction),
+
+                ScalarOutcome('A1_2 Aggr Expected Number of Deaths',
+                          variable_name=[var for var in casualties_a1_a2],
+                          function=sum_over, kind=direction),
+                          
+                ScalarOutcome('A3 Aggr Expected Number of Deaths',
+                          variable_name=[var for var in casualties_a3],
+                          function=sum_over, kind=direction),
+                          
+                ScalarOutcome('A1_5 Dike Investment Costs',
+                          variable_name=[var for var in dike_costs],
+                          function=sum_over, kind=direction),
+                          
+                ScalarOutcome('Room for River Investment Costs',
+                          variable_name=[var for var in rfr_costs],
+                          function=sum_over, kind=direction),
+                          
+                ScalarOutcome('Evacuation Costs',
+                          variable_name=[var for var in evacuation_costs],
+                          function=sum_over, kind=direction)]
 
     else:
         raise TypeError('unknownx identifier')

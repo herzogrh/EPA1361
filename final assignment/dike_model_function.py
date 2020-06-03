@@ -51,7 +51,7 @@ class DikeNetwork(object):
         self.sb = True
 
         # Planning window [y], reasonable for it to be a multiple of num_planning_steps
-        self.n = 200
+        self.n = 120
         # Years in planning step:
         self.y_step = self.n//self.num_planning_steps
         # Step of dike increase [m]
